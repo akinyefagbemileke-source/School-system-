@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+
+<body>
+
+<h1>Admin Dashboard 👨‍💼</h1>
+
+<h3>Add Student Result</h3>
+
+<input type="text" id="name" placeholder="Student Name"><br><br>
+<input type="text" id="subject" placeholder="Subject"><br><br>
+<input type="number" id="score" placeholder="Score"><br><br>
+
+<button onclick="saveResult()">Save Result</button>
+
+<p id="msg"></p>
+
+<hr>
+
+<h3>All Results</h3>
+
+<table border="1" width="100%">
+    <tr>
+        <th>Name</th>
+        <th>Subject</th>
+        <th>Score</th>
+        <th>Action</th>
+    </tr>
+    <tbody id="resultList"></tbody>
+</table>
+
+<br>
+<button onclick="clearAll()">Clear All Results</button>
+
+<script>
+function saveResult() {
+    let name = document.getElementById("name").value;
+    let subject = document.getElementById("subject").value;
+    let score = document.getElementById("score").value;
+
+    if (name === "" || subject === "" || score === "") {
+        document.getElementById("msg").innerText = "Fill all fields";
+        return;
+    }
+
+    let results = JSON.parse(localStorage.getItem("results")) || [];
+
+    results.push({
+        name: name,
+        subject: subject,
+        score: score
+    });
+
+    localStorage.setItem("results", JSON.stringify(results));
+
+    document.getElementById("msg").innerText = "Result saved!";
+    loadResults();
+}
+
+function loadResults() {
+    let data = JSON.parse(localStorage.getItem("results")) || [];
+    let output = "";
+
+    data.forEach((item, index) => {
+        output += `
+        <tr>
+            <td>${item.name}</td>
+            <td>${item.subject}</td>
+            <td>${item.score}</td>
+            <td>
+                <button onclick="deleteResult(${index})">Delete</button>
+            </td>
+        </tr>
+        `;
+    });
+
+    document.getElementById("resultList").innerHTML = output;
+}
+
+function deleteResult(index) {
+    let data = JSON.parse(localStorage.getItem("results"));
+    data.splice(index, 1);
+    localStorage.setItem("results", JSON.stringify(data));
+    loadResults();
+}
+
+function clearAll() {
+    localStorage.removeItem("results");
+    loadResults();
+}
+
+loadResults();
+</script>
+
+<br><br>
+<a href="index.html">Logout</a>
+
+</body>
+</html>
